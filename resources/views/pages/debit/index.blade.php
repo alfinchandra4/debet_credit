@@ -9,14 +9,16 @@
 
 <div class="card mt-4">
     <div class="card-body">
-        <table class="table">
+        <table class="table" id="table1">
             <thead>
                 <tr>
                     <th>#</th>
                     <th>Tanggal</th>
                     <th>Deskripsi</th>
-                    <th>Jumlah</th>
+                    <th>Via</th>
                     <th>Kategori</th>
+                    <th>Jumlah</th>
+                    <th></th>
                 </tr>
             </thead>
             <tbody>
@@ -24,13 +26,14 @@
                 <tr>
                     <td>{{ $loop->iteration }}</td>
                     <td>{{ date('d/m/y', strtotime($debt->date_created)) }}</td>
-                    <td>{{ $debt->description }}</td>
-                    <td>Rp. {{ number_format($debt->amount) }}</td>
+                    <td>{{ ucwords(strtolower($debt->description)) }}</td>
+                    <td><span class='badge bg-primary'>{{ $debt->method == 1 ? "CASH" : "TRF" }}</span></td>
                     <th>
-                        <span class="badge bg-light-primary">
+                        <span class="badge" style="background: {{ $debt->category->color }}">
                             {{ $debt->category->name }}
                         </span>
                     </th>
+                    <td>Rp. {{ number_format($debt->amount) }}</td>
                     <th>
                         <a href="{{ route('debit-delete', $debt->id) }}" class="btn btn-danger btn-sm">Delete</a>
                     </th>
@@ -54,10 +57,7 @@
                 @csrf
                 <div class="modal-body">
                     <div class="row">
-                        <div class="form-group">
-                            <label for="description">Keterangan</label>
-                            <input type="text" class="form-control" id="description" required name="description">
-                        </div>
+
                         <div class="form-group col-md-5">
                             <label for="date_created">Tanggal</label>
                             <input type="date" class="form-control" id="datepicker" required name="date_created" value="{{ date('Y-m-d') }}">
@@ -73,7 +73,13 @@
                                 @endforeach
                             </select>
                         </div>
-
+                        <div class="form-group">
+                            <label for="method">Secara</label>
+                            <select name="method" id="method" class="form-select">
+                                <option value="1">Tunai</option>
+                                <option value="2">Transfer</option>
+                            </select>
+                        </div>
                         <div class="form-group">
                             <label for="amount">Jumlah</label>
                             <div class="input-group">
@@ -81,10 +87,15 @@
                                 <input type="text" class="form-control" id="amount" required name="amount">
                             </div>
                         </div>
+                        <div class="form-group">
+                            <label for="description">Keterangan</label>
+                            <input type="text" class="form-control" id="description" required name="description">
+                        </div>
+
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                    <button type="button" class="btn btn-default" data-bs-dismiss="modal">Batal</button>
                     <button type="submit" class="btn btn-primary">Simpan</button>
                 </div>
             </form>
@@ -102,11 +113,15 @@
         }, 2500);
     });
 </script>
-{{-- <script>
-    $(function () {
-        $("#datepicker").datepicker();
+
+<script>
+    // Jquery Datatable
+    let jquery_datatable = $("#table1").DataTable({
+        "pageLength": 50,
+        "order": [[ 0, "desc" ]],
     });
-</script> --}}
+
+</script>
 @endsection
 
 {{--  --}}

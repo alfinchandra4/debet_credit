@@ -12,4 +12,8 @@ class DebitCredit extends Model
     protected $guarded = [];
 
     protected $table = 'debit_credit';
+
+    public function category() {
+        return $this->hasOne(Category::class, 'id', 'category_id');
+    }
 }

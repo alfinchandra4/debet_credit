@@ -27,6 +27,6 @@ class CreditController extends Controller
     public function delete($credit_id) {
         Credit::find($credit_id)->delete();
         DebitCredit::where('credit_id', $credit_id)->delete();
-        return back()->withSuccess('Berhasil menambah pengeluaran');
+        return back()->withSuccess('Berhasil menghapus pengeluaran');
     }
 }

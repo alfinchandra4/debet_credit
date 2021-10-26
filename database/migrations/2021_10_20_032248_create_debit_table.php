@@ -17,7 +17,8 @@ class CreateDebitTable extends Migration
             $table->id();
             $table->string('description');
             $table->date('date_created');
-            $table->foreignId('category_id')->constrained();
+            $table->enum('method', [1, 2]);
+            $table->foreignId('category_id')->nullable()->constrained()->cascadeOnUpdate()->nullOnDelete();
             $table->integer('amount');
             $table->timestamps();
         });

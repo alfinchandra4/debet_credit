@@ -4,19 +4,21 @@
 
 @section('content')
 <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
-    Tambah pengeluaran
+    Tambah Pengeluaran
 </button>
 
 <div class="card mt-4">
     <div class="card-body">
-        <table class="table">
+        <table class="table" id="table1">
             <thead>
                 <tr>
                     <th>#</th>
                     <th>Tanggal</th>
                     <th>Deskripsi</th>
-                    <th>Jumlah</th>
+                    <th>Via</th>
                     <th>Kategori</th>
+                    <th>Jumlah</th>
+                    <th></th>
                 </tr>
             </thead>
             <tbody>
@@ -24,13 +26,14 @@
                 <tr>
                     <td>{{ $loop->iteration }}</td>
                     <td>{{ date('d/m/y', strtotime($credit->date_created)) }}</td>
-                    <td>{{ $credit->description }}</td>
-                    <td>Rp. {{ number_format($credit->amount) }}</td>
+                    <td>{{ ucwords(strtolower($credit->description)) }}</td>
+                    <td><span class='badge bg-primary'>{{ $credit->method == 1 ? "CASH" : "TRF" }}</span></td>
                     <th>
-                        <span class="badge bg-light-primary">
+                        <span class="badge" style="background: {{ $credit->category->color }}">
                             {{ $credit->category->name }}
                         </span>
                     </th>
+                    <td>Rp. {{ number_format($credit->amount) }}</td>
                     <th>
                         <a href="{{ route('credit-delete', $credit->id) }}" class="btn btn-danger btn-sm">Delete</a>
                     </th>
@@ -54,14 +57,10 @@
                 @csrf
                 <div class="modal-body">
                     <div class="row">
-                        <div class="form-group">
-                            <label for="description">Keterangan</label>
-                            <input type="text" class="form-control" id="description" required name="description">
-                        </div>
+
                         <div class="form-group col-md-5">
                             <label for="date_created">Tanggal</label>
-                            <input type="date" class="form-control" id="datepicker" required name="date_created"
-                                value="{{ date('Y-m-d') }}">
+                            <input type="date" class="form-control" id="datepicker" required name="date_created" value="{{ date('Y-m-d') }}">
                         </div>
                         <div class="form-group">
                             <label for="category_id">Kategori</label>
@@ -74,13 +73,23 @@
                                 @endforeach
                             </select>
                         </div>
-
+                        <div class="form-group">
+                            <label for="method">Secara</label>
+                            <select name="method" id="method" class="form-select">
+                                <option value="1">Tunai</option>
+                                <option value="2">Transfer</option>
+                            </select>
+                        </div>
                         <div class="form-group">
                             <label for="amount">Jumlah</label>
                             <div class="input-group">
                                 <span class="input-group-text" id="amount">Rp.</span>
                                 <input type="text" class="form-control" id="amount" required name="amount">
                             </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="description">Keterangan</label>
+                            <input type="text" class="form-control" id="description" required name="description">
                         </div>
                     </div>
                 </div>
@@ -104,11 +113,14 @@
     });
 
 </script>
-{{-- <script>
-    $(function () {
-        $("#datepicker").datepicker();
+<script>
+    // Jquery Datatable
+    let jquery_datatable = $("#table1").DataTable({
+        "pageLength": 50,
+        "order": [[ 0, "desc" ]],
     });
-</script> --}}
+
+</script>
 @endsection
 
 {{--  --}}

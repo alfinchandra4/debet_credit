@@ -88,7 +88,7 @@
             </table>
             <div style="float: right">
                 <a href="{{ route('history') }}" class="btn btn-outline-secondary">Reset</a>
-                <button type="submit" class="btn btn-primary">Lihat Riwayat</button>
+                <button type="submit" class="btn btn-primary">Lihat Laporan</button>
             </div>
         </form>
     </div>
@@ -103,6 +103,7 @@
                     <th>#</th>
                     <th>Tanggal</th>
                     <th>Deskripsi</th>
+                    <th>Kategori</th>
                     <th>Debet</th>
                     <th>Kredit</th>
                     <th>Saldo</th>
@@ -128,14 +129,19 @@
                 <tr>
                     <td>{{ $loop->iteration }}</td>
                     <td>{{ date('d/m/Y', strtotime($data->date_created)) }}</td>
-                    <td>{{ $data->description }}</td>
+                    <td>{{ ucwords(strtolower($data->description)) }}</td>
+                    <td>
+                        <span class="badge" style="background: {{ $data->category->color }}">
+                            {{ $data->category->name }}
+                        </span>
+                    </td>
                     <td>{{ !isset($data->debit_id) ? '-' : 'Rp. '.number_format($data->amount) }}</td>
                     <td>{{ !isset($data->credit_id) ? '-' : 'Rp. '.number_format($data->amount) }}</td>
                     <td class="{{ $color }}">Rp. {{number_format($balance) }}</td>
                 </tr>
                 @endforeach
             </tbody>
-            <tfoot>
+            {{-- <tfoot>
                 <tr class="bg-primary text-white">
                     <td></td>
                     <td></td>
@@ -144,7 +150,7 @@
                     <td class="fw-bold">Rp. {{ number_format($credit) }}</td>
                     <td class="fw-bold">Rp. {{ number_format($debit - $credit) }}</td>
                 </tr>
-            </tfoot>
+            </tfoot> --}}
         </table>
     </div>
 </div>
